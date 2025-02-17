@@ -25,7 +25,9 @@ export default function TabLayout() {
           },
           default: {},
         }),
-      }}>
+      }}
+    >
+      {/* ✅ Home Screen */}
       <Tabs.Screen
         name="index"
         options={{
@@ -33,12 +35,24 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
+
+      ✅ Explore Screen
       <Tabs.Screen
         name="explore"
         options={{
           title: 'Explore',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
+      />
+
+      {/* ✅ Plan Savings Goal Screen */}
+      <Tabs.Screen
+        name="PlanSavingsScreen"
+        options={{
+          title: 'Plan Savings',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="target" color={color} />,
+        }}
+        
       />
     </Tabs>
   );

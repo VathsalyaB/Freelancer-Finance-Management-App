@@ -1,53 +1,41 @@
+import { useEffect, useState } from "react";
 import * as Google from "expo-auth-session/providers/google";
-import * as Facebook from "expo-auth-session/providers/facebook";
-import * as SecureStore from "expo-secure-store";
-import { GOOGLE_CLIENT_ID, FACEBOOK_APP_ID } from "@/utils/authConfig";
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import * as AuthSession from "expo-auth-session";
+import { makeRedirectUri } from "expo-auth-session";
+import { Platform } from "react-native";
 
 export function useAuth() {
-  const router = useRouter();
   const [user, setUser] = useState(null);
 
-  // Google Login
+  // Initialize Google Authentication
   const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId: GOOGLE_CLIENT_ID,
+    clientId: "637806351138-9d7u1qform6ph0p7kbdpt7n1tn8ls0sd.apps.googleusercontent.com",
+    androidClientId: "637806351138-9d7u1qform6ph0p7kbdpt7n1tn8ls0sd.apps.googleusercontent.com",
+    redirectUri: makeRedirectUri({
+      native: "expo.io", // Replace with your app's scheme
+    }),
   });
 
-  const handleGoogleLogin = async () => {
-    const result = await promptAsync();
-    if (result?.type === "success") {
-      const userInfo = await fetchUserInfo(result.authentication?.accessToken);
-      setUser(userInfo);
-      await SecureStore.setItemAsync("user", JSON.stringify(userInfo));
-      router.replace("/(dashboard)");
+  useEffect(() => {
+    if (response?.type === "success" && response.authentication) {
+      const { authentication } = response;
+      if (authentication) {
+        fetchUserInfo(authentication.accessToken);
+      }
     }
-  };
+  }, [response]);
 
-  // Facebook Login
-  const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
-    clientId: FACEBOOK_APP_ID,
-  });
-
-  const handleFacebookLogin = async () => {
-    const result = await fbPromptAsync();
-    if (result?.type === "success") {
-      const userInfo = await fetchUserInfo(result.authentication?.accessToken, "facebook");
+  async function fetchUserInfo(token: string) {
+    try {
+      const res = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const userInfo = await res.json();
       setUser(userInfo);
-      await SecureStore.setItemAsync("user", JSON.stringify(userInfo));
-      router.replace("/(dashboard)");
+    } catch (error) {
+      console.error("Failed to fetch user info:", error);
     }
-  };
+  }
 
-  const fetchUserInfo = async (token: string, provider = "google") => {
-    const endpoint =
-      provider === "google"
-        ? "https://www.googleapis.com/userinfo/v2/me"
-        : `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${token}`;
-
-    const response = await fetch(endpoint);
-    return response.json();
-  };
-
-  return { user, handleGoogleLogin, handleFacebookLogin };
+  return { user, promptAsync };
 }

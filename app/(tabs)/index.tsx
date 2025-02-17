@@ -1,74 +1,124 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from "react";
+import { ScrollView, View, Text, StyleSheet, Button } from "react-native";
+import ExpensesGraph from "../components/ExpensesGraph";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const HomeScreen = () => {
+  const [calculatedTax, setCalculatedTax] = useState<number | null>(null);
+  const hardcodedGeoLocation = "Bangalore, India"; // Hardcoded Indian location
 
-export default function HomeScreen() {
+  // Function to calculate tax (example: 10% of total income)
+  const handleTaxCalculation = () => {
+    const totalIncome = 25000 + 18000 + 12000; // Sum of all client incomes
+    const taxRate = 0.1; // 10% tax rate
+    const tax = totalIncome * taxRate;
+    setCalculatedTax(tax);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Home</Text>
+        <Text style={styles.userId}>User ID: 12345</Text>
+      </View>
+
+      {/* Client Income Table */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Client Income</Text>
+        <View style={styles.table}>
+          <View style={styles.row}>
+            <Text style={styles.cell}>Client</Text>
+            <Text style={styles.cell}>Income</Text>
+            <Text style={styles.cell}>Status</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.cell}>Client A</Text>
+            <Text style={styles.cell}>₹25,000</Text>
+            <Text style={[styles.cell, { color: "green" }]}>Paid</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.cell}>Client B</Text>
+            <Text style={styles.cell}>₹18,000</Text>
+            <Text style={[styles.cell, { color: "green" }]}>Paid</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.cell}>Client C</Text>
+            <Text style={styles.cell}>₹12,000</Text>
+            <Text style={[styles.cell, { color: "red" }]}>Overdue</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Expenses Graph */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Expenses Overview</Text>
+        <ExpensesGraph />
+      </View>
+
+      {/* Tax Calculation */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Tax Calculation</Text>
+        <Button title="Calculate Tax" onPress={handleTaxCalculation} />
+        {calculatedTax !== null && (
+          <View style={styles.taxResult}>
+            <Text style={styles.resultText}>Calculated Tax: ₹{calculatedTax.toFixed(2)}</Text>
+            <Text style={styles.resultText}>Based on Location: {hardcodedGeoLocation}</Text> {/* Updated to Indian location */}
+          </View>
+        )}
+      </View>
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flexGrow: 1,
+    padding: 16,
+    backgroundColor: "#fff",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  userId: {
+    fontSize: 16,
+    color: "gray",
+  },
+  section: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  table: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  row: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    paddingVertical: 8,
+  },
+  cell: {
+    flex: 1,
+    textAlign: "center",
+  },
+  taxResult: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
+  },
+  resultText: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
+
+export default HomeScreen;

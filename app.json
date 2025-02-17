@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "com.vachu.stjosephs.freelance.finance",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -15,7 +15,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "config": {
+        "googleSignIn": {
+          "apiKey": "637806351138-9d7u1qform6ph0p7kbdpt7n1tn8ls0sd.apps.googleusercontent.com",
+          "certificateHash": "FA:9A:48:26:A0:51:00:46:AE:3C:A5:8B:6A:FE:4F:E2:26:5D:68:17"
+        }
+      },
+      "package": "com.vathsalyaabhi.freelancer"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +43,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0805f9a9-a64f-4e88-8a32-36d38ab3fb3c"
+      },
+      "router": {
+        "origin": false
+      }
+    },
+    "owner": "vathsalyaabhi"
   }
 }

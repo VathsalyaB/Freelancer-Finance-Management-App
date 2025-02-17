@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 
 export default function DashboardScreen() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<{ name: string; email: string; picture: string } | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -17,7 +17,7 @@ export default function DashboardScreen() {
 
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("user");
-    router.replace("/(auth)/LoginScreen");
+    router.replace({ pathname: "/auth/LoginScreen" });
   };
 
   if (!user) return <Text>Loading...</Text>;

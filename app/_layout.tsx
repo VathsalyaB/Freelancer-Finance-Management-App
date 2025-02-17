@@ -1,25 +1,44 @@
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { Stack } from 'expo-router';
 import { useEffect, useState } from "react";
+import { Slot, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { Stack } from "expo-router";
+import * as SplashScreen from 'expo-splash-screen';
+import { View, ActivityIndicator } from "react-native";
+
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
+import { SavingsProvider } from "../contexts/SavingsContext";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const colorScheme = useColorScheme();
+  const [loaded] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+  console.log("TEST 123");
+  // useEffect(() => {
+  //   // if (loaded) {
+  SplashScreen.hideAsync();
+  //   // }
+  // }, [loaded]);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const user = await SecureStore.getItemAsync("user");
-      setIsAuthenticated(!!user);
-    };
-    checkAuth();
-  }, []);
+  // if (!loaded) {
+  //   return null;
+  // }
 
   return (
-    <Stack>
-      {!isAuthenticated ? (
-        <Stack.Screen name="(auth)/LoginScreen" options={{ headerShown: false }} />
-      ) : (
-        <Stack.Screen name="(dashboard)/DashboardScreen" options={{ title: "Dashboard" }} />
-      )}
-    </Stack>
+    <SavingsProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          {/* <Stack.Screen name="plan-savings" options={{ title: "Plan Savings" }} /> */}
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </SavingsProvider>
   );
 }
